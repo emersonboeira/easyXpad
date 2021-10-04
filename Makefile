@@ -1,5 +1,4 @@
 # Makefile for easyXpad
-
 # Standard GNU project directory structure
 SRC_FOLDER = src/
 BUILD_FOLDER = build/
@@ -13,12 +12,10 @@ CXX = g++
 CXXFLAGS = -c -MMD -g -std=c++17
 # Flags to link the objects
 LDFLAGS = 
-
 # .cpp, .o, and .d files
 SRC_CPP = $(wildcard $(SRC_FOLDER)*.cpp)
 SRC_OBJS = $(SRC_CPP:$(SRC_FOLDER)%.cpp=$(BUILD_FOLDER)%.o)
 DEPS = $(APP_OBJS:%.o=%.d) $(SRC_OBJS:%.o=%.d)
-
 # Links the object files to build the .out
 $(EXECT): $(SRC_OBJS) | $(TRGT_FOLDER)
 	$(CXX) -o $@ $^ $(LDFLAGS)
