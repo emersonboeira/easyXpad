@@ -107,8 +107,7 @@ std::list<eXpad::XboxController> eXpad::findXpads()
             char eXpad_name[128];
             int eXpad_fd = open(dirpath.c_str(), O_RDONLY | O_NONBLOCK);
             ioctl(eXpad_fd, JSIOCGNAME(sizeof(eXpad_name)), &eXpad_name);
-            if (!((std::string)eXpad_name).find(XBOX_ONE_CONTROLLER) 
-            || !((std::string)eXpad_name).find(XBOX_360_CONTROLLER))                
+            if (!((std::string)eXpad_name).find(XBOX_ONE_CONTROLLER) || !((std::string)eXpad_name).find(XBOX_360_CONTROLLER))                
             {
                 int eXpad_nb=0, eXpad_na=0;
                 ioctl(eXpad_fd, JSIOCGBUTTONS, &eXpad_nb);
