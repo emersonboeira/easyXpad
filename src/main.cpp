@@ -3,9 +3,13 @@
 
 int main()
 {
-    std::list<eXpad::Xbox_controller> controller_list;
+    std::list<eXpad::XboxController> controller_list;
 
     controller_list = eXpad::findXpads();
+
+    while(1) {
+        controller_list.begin()->readEvents();
+    }
 
     return 0;
 }

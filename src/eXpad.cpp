@@ -1,29 +1,85 @@
 #include "eXpad.h"
 
-eXpad::Xbox_controller::Xbox_controller(char* name, std::string path,
-                                        int nb, int na)
+eXpad::XboxController::XboxController(char* name, std::string path, int nb, int na)
 {
-    this->controller_name = (std::string)name;
-    this->controller_path = path;
-    this->buttons_number = nb;
-    this->axis_number = na;
+    this->controllerName = (std::string)name;
+    this->controllerPath = path;
+    this->number_of_buttons = nb;
+    this->number_of_axis = na;
 
-    if (this->controller_name == XBOX_360_CONTROLLER) {
-        this->controller_type = kXbox360_Controller;
+    if (this->controllerName == XBOX_360_CONTROLLER) {
+        this->controllerType = kXbox360_Controller;
     }
-    else if (this->controller_name == XBOX_ONE_CONTROLLER) {
-        this->controller_type = kXboxOne_Controller;
+    else if (this->controllerName == XBOX_ONE_CONTROLLER) {
+        this->controllerType = kXboxOne_Controller;
     }
+
+    this->controller_fd = open(this->controllerPath.c_str(), O_RDONLY | O_NONBLOCK);
+
+    eXpad::Button A, B, X, Y;
+    A.name = "A"; A.address = 0; this->controllerButtons.push_back(A);
+    B.name = "B"; B.address = 1; this->controllerButtons.push_back(B);
+    X.name = "X"; X.address = 2; this->controllerButtons.push_back(X);
+    Y.name = "Y"; Y.address = 3; this->controllerButtons.push_back(Y);
+
+    eXpad::Button LB, RB;
+    LB.name = "LB"; LB.address = 4; this->controllerButtons.push_back(LB);
+    RB.name = "RB"; RB.address = 5; this->controllerButtons.push_back(RB);
+    
+    eXpad::Button Back, Start, Guide;
+    Back.name = "Back"; Back.address = 6; this->controllerButtons.push_back(Back);
+    Start.name = "Start"; Start.address = 7; this->controllerButtons.push_back(Start);
+    Guide.name = "Guide"; Guide.address = 8; this->controllerButtons.push_back(Guide);
+
+    eXpad::Button LSB, RSB;
+    LSB.name = "LSB"; LSB.address = 9; this->controllerButtons.push_back(LSB);
+    RSB.name = "RSB"; RSB.address = 10; this->controllerButtons.push_back(RSB);
+
+    eXpad::Axis LSB_x, LSB_y, LT;
+    LSB_x.name = "LSB_x"; LSB_x.address = 0;
+    LSB_y.name = "LSB_y"; LSB_y.address = 1;
+    eXpad::Thumbstick left_stick;
+    left_stick.name = "LEFT_STICK";
+    left_stick.x = LSB_x; left_stick.y = LSB_y;
+
+    LT.name = "LT"; LT.address = 2;
+    this->controllerTriggers.push_back(LT);
+
+    eXpad::Axis RSB_x, RSB_y, RT;
+    RSB_x.name = "RSB_x"; RSB_x.address = 3;
+    RSB_y.name = "RSB_y"; RSB_y.address = 4;
+    eXpad::Thumbstick right_stick;
+    right_stick.name = "RIGHT_STICK";
+    right_stick.x = RSB_x; right_stick.y = RSB_y;
+    
+    RT.name = "RT"; RT.address = 5;
+    this->controllerTriggers.push_back(RT);
+
+    eXpad::Axis DPAD_x, DPAD_y;
+    DPAD_x.name = "DPAD_x"; DPAD_x.address = 6;
+    DPAD_y.name = "DPAD_y"; DPAD_y.address = 7;
+    this->controllerDpad.x = DPAD_x; this->controllerDpad.y = DPAD_y;
 }
 
-eXpad::Xbox_controller::~Xbox_controller()
+void eXpad::XboxController::readEvents()
+{
+    struct js_event controller_event;
+    if ( read(this->controller_fd, &controller_event, sizeof(controller_event)) > 0 )
+    {
+        printf("Event: time %8u, value %8hd, type: %3u, axis/button: %u\n",
+             controller_event.time, controller_event.value, controller_event.type,
+             controller_event.number);
+    }    
+}
+
+eXpad::XboxController::~XboxController()
 {
 }
 
-std::list<eXpad::Xbox_controller> eXpad::findXpads()
+std::list<eXpad::XboxController> eXpad::findXpads()
 {
-    std::list<eXpad::Xbox_controller> c_list;
-    for (auto const& dir_entry: std::filesystem::directory_iterator(INPUTS_PATH))
+    std::list<eXpad::XboxController> c_list;
+    for (auto const& dir_entry: std::filesystem::directory_iterator(INPUT_PATH))
     {
         std::string dirpath = (dir_entry.path()).u8string();
         if (!dirpath.find(JOYSTICK_PATH))
@@ -37,11 +93,10 @@ std::list<eXpad::Xbox_controller> eXpad::findXpads()
                 int eXpad_nb=0, eXpad_na=0;
                 ioctl(eXpad_fd, JSIOCGBUTTONS, &eXpad_nb);
                 ioctl(eXpad_fd, JSIOCGAXES, &eXpad_na);
-                eXpad::Xbox_controller controller_read = eXpad::Xbox_controller(eXpad_name, dirpath, 
-                                                                                eXpad_nb, eXpad_na);
+
+                eXpad::XboxController controller_read = eXpad::XboxController(eXpad_name, dirpath, eXpad_nb, eXpad_na);
                 c_list.push_back(controller_read);
             }
-            
         }
     }
     if (c_list.empty())

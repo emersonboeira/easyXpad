@@ -2,8 +2,9 @@
 #define EASYXPAD_H
 
 // C system headers
-#include <fcntl.h> // to use open()
-#include <stdio.h> // to print and test - REMOVE
+#include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
 #include <linux/joystick.h>
 
 // C++ standard library headers
@@ -14,7 +15,7 @@
 
 namespace eXpad{
 
-    #define INPUTS_PATH          "/dev/input/"
+    #define INPUT_PATH          "/dev/input/"
     #define JOYSTICK_PATH       "/dev/input/js"
     #define XBOX_ONE_CONTROLLER "Microsoft X-Box One pad"
     #define XBOX_360_CONTROLLER "Microsoft X-Box 360 pad"
@@ -33,32 +34,41 @@ namespace eXpad{
     struct Axis {
         std::string name;
         int address;
-        float x=0 , y=0, r=0, tht=0;
+        float value;
     };
 
-    struct DPAD {
+    struct Thumbstick {
+        std::string name;
+        eXpad::Axis x, y;
+        float r = 0, tht = 0;
+    };
+
+    struct Dpad {
         std::string name="DPAD";
-        std::string direction;
+        eXpad::Axis x, y;
     };
         
-    class Xbox_controller
+    class XboxController
     {
     private:
-        std::string controller_name;
-        std::string controller_path;
-        int buttons_number, axis_number;
-        eXpad::ControllerType controller_type;
+        std::string controllerName;
+        std::string controllerPath;
+        int number_of_buttons, number_of_axis;
+        int controller_fd;
+        eXpad::ControllerType controllerType;
 
-        std::list<Button> controller_buttons;
-        std::list<Axis> controller_axis;
-        DPAD controller_dpad;
+        std::list<Button> controllerButtons;
+        std::list<Axis> controllerTriggers;
+        std::list<Thumbstick> controllerThumbsticks;
+        Dpad controllerDpad;
 
     public:
-        Xbox_controller(char* cont_name, std::string path, int nb, int na);
-        ~Xbox_controller();
+        XboxController(char* cont_name, std::string path, int nb, int na);
+        void readEvents();
+        ~XboxController();
     };
-    //Nonmember functions
-    std::list<Xbox_controller> findXpads();
+
+    std::list<XboxController> findXpads();
 };
 
 #endif
