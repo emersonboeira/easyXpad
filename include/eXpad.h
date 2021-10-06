@@ -64,7 +64,8 @@ namespace eXpad{
 
     public:
         XboxController(char* cont_name, std::string path, int nb, int na);
-        void readEvents();
+        void readControllerEvents();
+        bool getValue();
         ~XboxController();
     };
 

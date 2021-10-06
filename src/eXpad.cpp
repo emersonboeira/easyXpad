@@ -61,15 +61,35 @@ eXpad::XboxController::XboxController(char* name, std::string path, int nb, int 
     this->controllerDpad.x = DPAD_x; this->controllerDpad.y = DPAD_y;
 }
 
-void eXpad::XboxController::readEvents()
+void eXpad::XboxController::readControllerEvents()
 {
     struct js_event controller_event;
     if ( read(this->controller_fd, &controller_event, sizeof(controller_event)) > 0 )
     {
-        printf("Event: time %8u, value %8hd, type: %3u, axis/button: %u\n",
-             controller_event.time, controller_event.value, controller_event.type,
-             controller_event.number);
-    }    
+        switch (controller_event.type)
+        {
+        case 1:
+        {
+            std::list<eXpad::Button>::iterator buttonsIterator;
+            for (buttonsIterator = this->controllerButtons.begin(); buttonsIterator != this->controllerButtons.end();
+                 buttonsIterator++)
+            {
+                if (buttonsIterator->address == controller_event.number)
+                {
+                    buttonsIterator->value = controller_event.value;
+                }   
+            }
+            break;
+        }
+        default:
+            break;
+        }
+    }
+}
+
+bool eXpad::XboxController::getValue()
+{
+    return this->controllerButtons.begin()->value;
 }
 
 eXpad::XboxController::~XboxController()
