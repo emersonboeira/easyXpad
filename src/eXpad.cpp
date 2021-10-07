@@ -31,17 +31,16 @@ eXpad::XboxController::XboxController(char* name, std::string path, int nb, int 
     eXpad::Axis LSB_x, LSB_y, LT;
     LSB_x.name = "LSB_x"; LSB_x.address = 0; this->controllerAxis.push_back(LSB_x);
     LSB_y.name = "LSB_y"; LSB_y.address = 1; this->controllerAxis.push_back(LSB_y);
-    LT.name = "LT"; LT.address = 2;
+    LT.name = "LT"; LT.address = 2; LT.value = -32767; this->controllerAxis.push_back(LT);
 
     eXpad::Axis RSB_x, RSB_y, RT;
-    RSB_x.name = "RSB_x"; RSB_x.address = 3;
-    RSB_y.name = "RSB_y"; RSB_y.address = 4;
-    RT.name = "RT"; RT.address = 5;
+    RSB_x.name = "RSB_x"; RSB_x.address = 3; this->controllerAxis.push_back(RSB_x);
+    RSB_y.name = "RSB_y"; RSB_y.address = 4; this->controllerAxis.push_back(RSB_y);
+    RT.name = "RT"; RT.address = 5; RT.value = -32767; this->controllerAxis.push_back(RT);
 
     eXpad::Axis DPAD_x, DPAD_y;
-    DPAD_x.name = "DPAD_x"; DPAD_x.address = 6;
-    DPAD_y.name = "DPAD_y"; DPAD_y.address = 7;
-
+    DPAD_x.name = "DPAD_x"; DPAD_x.address = 6; this->controllerAxis.push_back(DPAD_x);
+    DPAD_y.name = "DPAD_y"; DPAD_y.address = 7; this->controllerAxis.push_back(DPAD_y);
 }
 
 void eXpad::XboxController::setButtonValue(unsigned char number, signed short value)
@@ -85,6 +84,16 @@ void eXpad::XboxController::readControllerEvents()
             break;
         }
     }
+}
+
+std::list<eXpad::Button> eXpad::XboxController::getButtons()
+{
+    return this->controllerButtons;
+}
+
+std::list<eXpad::Axis> eXpad::XboxController::getAxis()
+{
+    return this->controllerAxis;
 }
 
 eXpad::XboxController::~XboxController()

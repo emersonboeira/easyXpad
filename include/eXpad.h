@@ -22,13 +22,13 @@ namespace eXpad{
     struct Button {
         std::string name;
         int address;
-        bool value =0;
+        bool value = 0;
     };
 
     struct Axis {
         std::string name;
         int address;
-        float value;
+        float value = 0;
     };
         
     class XboxController
@@ -39,8 +39,8 @@ namespace eXpad{
         int number_of_buttons, number_of_axis;
         int controller_fd;
 
-        std::list<Button> controllerButtons;
-        std::list<Axis> controllerAxis;
+        std::list<eXpad::Button> controllerButtons;
+        std::list<eXpad::Axis> controllerAxis;
 
         void setButtonValue(unsigned char number, signed short value);
         void setAxisValue(unsigned char number, signed short value);
@@ -48,6 +48,8 @@ namespace eXpad{
     public:
         XboxController(char* cont_name, std::string path, int nb, int na);
         void readControllerEvents();
+        std::list<eXpad::Button> getButtons();
+        std::list<eXpad::Axis> getAxis();
         ~XboxController();
     };
 
