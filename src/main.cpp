@@ -19,10 +19,10 @@ int main()
         controllerAxis = controller_list.begin()->getAxis();
 
         for (buttonsIterator = controllerButtons.begin(); buttonsIterator != controllerButtons.end(); buttonsIterator++)
-            std::cout << "(" << std::setw(3) << buttonsIterator->name+": " << std::setw(4) << buttonsIterator->value << ")";
+            std::cout << "(" << buttonsIterator->name+": " << buttonsIterator->value << ")";
         std::cout << "  ";
         for (axisIterator = controllerAxis.begin(); axisIterator != controllerAxis.end(); axisIterator++)
-            std::cout << "(" << std::setw(5) <<  axisIterator->name+": " << std::setw(6) << axisIterator->value << ")";
+            std::cout << "(" <<  axisIterator->name+": " << std::setw(6) << axisIterator->value << ")";
         std::cout << std::endl;
 
     }
