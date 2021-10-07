@@ -7,13 +7,6 @@ eXpad::XboxController::XboxController(char* name, std::string path, int nb, int 
     this->number_of_buttons = nb;
     this->number_of_axis = na;
 
-    if (this->controllerName == XBOX_360_CONTROLLER) {
-        this->controllerType = kXbox360_Controller;
-    }
-    else if (this->controllerName == XBOX_ONE_CONTROLLER) {
-        this->controllerType = kXboxOne_Controller;
-    }
-
     this->controller_fd = open(this->controllerPath.c_str(), O_RDONLY | O_NONBLOCK);
 
     eXpad::Button A, B, X, Y;
@@ -36,29 +29,43 @@ eXpad::XboxController::XboxController(char* name, std::string path, int nb, int 
     RSB.name = "RSB"; RSB.address = 10; this->controllerButtons.push_back(RSB);
 
     eXpad::Axis LSB_x, LSB_y, LT;
-    LSB_x.name = "LSB_x"; LSB_x.address = 0;
-    LSB_y.name = "LSB_y"; LSB_y.address = 1;
-    eXpad::Thumbstick left_stick;
-    left_stick.name = "LEFT_STICK";
-    left_stick.x = LSB_x; left_stick.y = LSB_y;
-
+    LSB_x.name = "LSB_x"; LSB_x.address = 0; this->controllerAxis.push_back(LSB_x);
+    LSB_y.name = "LSB_y"; LSB_y.address = 1; this->controllerAxis.push_back(LSB_y);
     LT.name = "LT"; LT.address = 2;
-    this->controllerTriggers.push_back(LT);
 
     eXpad::Axis RSB_x, RSB_y, RT;
     RSB_x.name = "RSB_x"; RSB_x.address = 3;
     RSB_y.name = "RSB_y"; RSB_y.address = 4;
-    eXpad::Thumbstick right_stick;
-    right_stick.name = "RIGHT_STICK";
-    right_stick.x = RSB_x; right_stick.y = RSB_y;
-    
     RT.name = "RT"; RT.address = 5;
-    this->controllerTriggers.push_back(RT);
 
     eXpad::Axis DPAD_x, DPAD_y;
     DPAD_x.name = "DPAD_x"; DPAD_x.address = 6;
     DPAD_y.name = "DPAD_y"; DPAD_y.address = 7;
-    this->controllerDpad.x = DPAD_x; this->controllerDpad.y = DPAD_y;
+
+}
+
+void eXpad::XboxController::setButtonValue(unsigned char number, signed short value)
+{
+    std::list<eXpad::Button>::iterator buttonsIterator;
+    for (buttonsIterator = this->controllerButtons.begin(); buttonsIterator != this->controllerButtons.end(); buttonsIterator++)
+    {
+        if (buttonsIterator->address == number)
+            {
+                buttonsIterator->value = value;
+            }   
+    }
+}
+
+void eXpad::XboxController::setAxisValue(unsigned char number, signed short value)
+{
+    std::list<eXpad::Axis>::iterator axisIterator;
+    for (axisIterator = this->controllerAxis.begin(); axisIterator != this->controllerAxis.end(); axisIterator++)
+    {
+        if (axisIterator->address == number)
+            {
+                axisIterator->value = value;
+            }   
+    }
 }
 
 void eXpad::XboxController::readControllerEvents()
@@ -69,27 +76,15 @@ void eXpad::XboxController::readControllerEvents()
         switch (controller_event.type)
         {
         case 1:
-        {
-            std::list<eXpad::Button>::iterator buttonsIterator;
-            for (buttonsIterator = this->controllerButtons.begin(); buttonsIterator != this->controllerButtons.end();
-                 buttonsIterator++)
-            {
-                if (buttonsIterator->address == controller_event.number)
-                {
-                    buttonsIterator->value = controller_event.value;
-                }   
-            }
+            this->setButtonValue(controller_event.number, controller_event.value);
             break;
-        }
+        case 2:
+            this->setAxisValue(controller_event.number, controller_event.value);
+            break;
         default:
             break;
         }
     }
-}
-
-bool eXpad::XboxController::getValue()
-{
-    return this->controllerButtons.begin()->value;
 }
 
 eXpad::XboxController::~XboxController()
