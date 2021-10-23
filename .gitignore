@@ -4,6 +4,9 @@
 # Compiled Object files
 *.o
 
+# Compiled Shared libraries
+*.so
+
 # Executables
 *.out
 
