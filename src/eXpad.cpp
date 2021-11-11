@@ -1,4 +1,4 @@
-#include "eXpad.h"
+#include <eXpad.h>
 
 eXpad::XboxController::XboxController(char* name, std::string path, int nb, int na)
 {
@@ -128,7 +128,7 @@ std::list<eXpad::XboxController> eXpad::findXpads()
     }
     else
     {
-        std::cout << "Found " << c_list.size() << " X-Box controllers on our device!"  << std::endl;
+        std::cout << "Found " << c_list.size() << " X-Box controllers!"  << std::endl;
     }
     return c_list;
 }
