@@ -8,8 +8,8 @@ To use easyXpad as a shared library on Linux it's necessary to compile the libra
 make
 
 # on easyXpad directory folder:
-sudo cp /include/eXpad.h /usr/local/include/
-sudo cp /lib/libeXpad.so /usr/local/lib/
+sudo cp include/eXpad.h /usr/local/include/
+sudo cp lib/libeXpad.so /usr/local/lib/
 ```
 # Usage
 To use easyXpad functions and classes, include the following header in your C++ code
