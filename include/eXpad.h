@@ -19,6 +19,14 @@ namespace eXpad{
     #define XBOX_ONE_CONTROLLER "Microsoft X-Box One pad"
     #define XBOX_360_CONTROLLER "Microsoft X-Box 360 pad"
 
+    struct ControllerInfos {
+        std::string controllerName;
+        std::string controllerPath;
+        int number_of_buttons;
+        int number_of_axis;
+        int controller_fd;
+    };
+
     struct Button {
         std::string name;
         int address;
@@ -34,11 +42,7 @@ namespace eXpad{
     class XboxController
     {
     private:
-        std::string controllerName;
-        std::string controllerPath;
-        int number_of_buttons, number_of_axis;
-        int controller_fd;
-
+        eXpad::ControllerInfos controllerInfos;
         std::list<eXpad::Button> controllerButtons;
         std::list<eXpad::Axis> controllerAxis;
 
@@ -48,6 +52,7 @@ namespace eXpad{
     public:
         XboxController(char* cont_name, std::string path, int nb, int na);
         void readControllerEvents();
+        eXpad::ControllerInfos getControllerInfos();
         std::list<eXpad::Button> getButtons();
         std::list<eXpad::Axis> getAxis();
         ~XboxController();

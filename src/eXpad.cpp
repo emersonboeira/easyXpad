@@ -2,12 +2,12 @@
 
 eXpad::XboxController::XboxController(char* name, std::string path, int nb, int na)
 {
-    this->controllerName = (std::string)name;
-    this->controllerPath = path;
-    this->number_of_buttons = nb;
-    this->number_of_axis = na;
+    this->controllerInfos.controllerName = (std::string)name;
+    this->controllerInfos.controllerPath = path;
+    this->controllerInfos.number_of_buttons = nb;
+    this->controllerInfos.number_of_axis = na;
 
-    this->controller_fd = open(this->controllerPath.c_str(), O_RDONLY | O_NONBLOCK);
+    this->controllerInfos.controller_fd = open(this->controllerInfos.controllerPath.c_str(), O_RDONLY | O_NONBLOCK);
 
     eXpad::Button A, B, X, Y;
     A.name = "A"; A.address = 0; this->controllerButtons.push_back(A);
@@ -70,7 +70,7 @@ void eXpad::XboxController::setAxisValue(unsigned char number, signed short valu
 void eXpad::XboxController::readControllerEvents()
 {
     struct js_event controller_event;
-    if ( read(this->controller_fd, &controller_event, sizeof(controller_event)) > 0 )
+    if ( read(this->controllerInfos.controller_fd, &controller_event, sizeof(controller_event)) > 0 )
     {
         switch (controller_event.type)
         {
@@ -84,6 +84,11 @@ void eXpad::XboxController::readControllerEvents()
             break;
         }
     }
+}
+
+eXpad::ControllerInfos eXpad::XboxController::getControllerInfos()
+{
+    return this->controllerInfos;
 }
 
 std::list<eXpad::Button> eXpad::XboxController::getButtons()
