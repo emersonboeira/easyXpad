@@ -45,6 +45,13 @@ $(BUILD_FOLDER):
 	mkdir -p $@
 # Dependencies
 -include $(DEPS)
+# Install
+install:
+	mkdir /usr/local/include/easyXpad/
+	cp include/eXpad.h /usr/local/include/easyXpad/
+	cp lib/libeXpad.so /usr/local/lib/
+uninstall:
+	rm -f /usr/local/include/easyXpad /usr/local/lib/libeXpad.so
 # Clean
 clean:
 	rm -f $(EXECT) $(wildcard $(BUILD_FOLDER)*.o) $(wildcard $(BUILD_FOLDER)*.d) $(wildcard $(LIB_FOLDER)*.so)
