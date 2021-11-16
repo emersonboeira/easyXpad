@@ -47,7 +47,7 @@ $(BUILD_FOLDER):
 -include $(DEPS)
 # Install
 install:
-	mkdir /usr/local/include/easyXpad/
+	mkdir -p /usr/local/include/easyXpad/
 	cp include/eXpad.h /usr/local/include/easyXpad/
 	cp lib/libeXpad.so /usr/local/lib/
 uninstall:

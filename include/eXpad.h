@@ -36,7 +36,7 @@ namespace eXpad{
     struct Axis {
         std::string name;
         int address;
-        float value = 0;
+        int value = 0;
     };
         
     class XboxController
